@@ -41,6 +41,7 @@ enum planck_keycodes {
   RU_LANG,
   CTRL,
   DVP, 
+  RU,
 };
 
 #define LOWER MO(_LOWER)
@@ -108,7 +109,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | Del  |  [   |  {   |  }   |  (   |  =   |  *   |   )  |   +  |   !  |   ]  |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |      |      |      |      |      |
+ * |      |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  | RU   |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      |             |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
@@ -116,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = LAYOUT_planck_grid(
     _______, _______, _______, KC_TILD, KC_PERC, _______, _______, KC_CIRC, KC_GRV,  KC_BSLS, _______, KC_DEL,
     KC_DEL,  KC_LBRC, KC_LCBR, KC_RCBR, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN, KC_PLUS, KC_EXLM, KC_RBRC, _______,
-    _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   _______, _______, _______, _______, _______,
+    _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   RU,      _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______ 
 ),
 
@@ -219,15 +220,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
       return false;
       break;
-      
-     case DVP,
+    case RU:
+       if (record->event.pressed) {    
+          layer_on(_QWERTY);
+        }
+      return false;
+      break; 
+    case DVP:
        if (record->event.pressed) {    
           layer_off(_QWERTY);
         }
       return false;
       break; 
        
-    case CTRL,
+    case CTRL:
        if (record->event.pressed) {    
           layer_on(_CTRL);
           SEND_STRING(SS_DOWN(X_LCTRL));
