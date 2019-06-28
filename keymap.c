@@ -191,34 +191,39 @@ uint32_t layer_state_set_user(uint32_t state) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
-    case EN_LANG:
+    
+    case EN_LANG: // sends win + space and turns off russan(qwerty) layer
       if (record->event.pressed) {
           SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_SPACE)SS_UP(X_LGUI));
           layer_off(_QWERTY);
         }
       return false;
       break;
-    case RU_LANG:
+    
+    case RU_LANG: // sends win + space and turns on russian(qwerty) layer
       if (record->event.pressed) {               
           SEND_STRING(SS_DOWN(X_LGUI)SS_TAP(X_SPACE)SS_UP(X_LGUI));
           layer_on(_QWERTY);
         }
       return false;
       break;
-    case RU:
-       if (record->event.pressed) {    
+
+    case RU: // turns on russian(qwerty) layer
+      if (record->event.pressed) {    
           layer_on(_QWERTY);
         }
       return false;
       break; 
-    case DVP:
-       if (record->event.pressed) {    
+   
+    case DVP: // turns off russian(qwerty) layer
+      if (record->event.pressed) {    
           layer_off(_QWERTY);
         }
       return false;
       break; 
-     case CTRL:
-       if (record->event.pressed) {    
+    
+    case CTRL:
+      if (record->event.pressed) {    
           layer_on(_EN);
           SEND_STRING(SS_DOWN(X_LCTRL));
         } else {
@@ -228,13 +233,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
       break; 
   
-  case ALT:
+    case ALT:
        if (record->event.pressed) {    
           layer_on(_EN);
           SEND_STRING(SS_DOWN(X_LALT));
         } else {
           layer_off(_EN);  
           SEND_STRING(SS_UP(X_LALT));
+        }
+      return false;
+      break; 
+    
+    case GUI:
+       if (record->event.pressed) {    
+          layer_on(_EN);
+          SEND_STRING(SS_DOWN(X_LGUI));
+        } else {
+          layer_off(_EN);  
+          SEND_STRING(SS_UP(X_LGUI));
         }
       return false;
       break; 
