@@ -6,6 +6,7 @@ extern keymap_config_t keymap_config;
 enum planck_layers {
   _DVORAK,
   _QWERTY,
+  _EN,
   _LOWER,
   _RAISE,
   _ADJUST
@@ -16,19 +17,22 @@ enum planck_keycodes {
   DVORAK,
   BACKLIT,
 
-  //TODO
-  EN_LANG,
-  RU_LANG,
-  DVP,
-  RU,
-
   CTRL,
   ALT,
   GUI,
+
+  RU,
+  DVP,
+
+  //TODO
+  EN_LANG,
+  RU_LANG,
 };
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
+#define ESC LCA_T(KC_ESC)  // ESC when tapped and CTRL + ALT   when held
+#define TAB C_S_T(KC_TAB)  // TAB when tapped and CTPL + SHIFT when held
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -44,10 +48,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_DVORAK] = LAYOUT_planck_grid(
-    _______, KC_SCLN, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_BSPC,
-    _______, KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_MINS,
+    TAB,     KC_SCLN, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_BSPC,
+    ESC,     KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_MINS,
     KC_LSFT, KC_QUOT, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_SFTENT,
-    _______, _______, _______, _______, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    RU_LANG, CTRL,    ALT,     GUI,     LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
 
@@ -59,14 +63,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
+ * |ENLANG| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
  * `-----------------------------------------------------------------------------------'
  */
 [_QWERTY] = LAYOUT_planck_grid(
-    KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
-    KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT ,
-    BACKLIT, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    _______,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    _______,
+    _______,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+    _______,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,  _______ ,
+    EN_LANG,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,  _______
+),
+
+/* EN
+ * ,-----------------------------------------------------------------------------------.
+ * |      |   "  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  |      |
+ * |------+------+------+------+------+-------------+------+------+------+------+------|
+ * |      |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |      |
+ * |------+------+------+------+------+------|------+------+------+------+------+------|
+ * |      |   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      |      |      |             |      |      |      |      |      |
+ * `-----------------------------------------------------------------------------------'
+ */
+[_EN] = LAYOUT_planck_grid(
+    _______, KC_SCLN, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    _______,
+    _______, KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    _______,
+    _______, KC_QUOT, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
 
 /* Lower
@@ -144,26 +166,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+
     case DVORAK:
       if (record->event.pressed) {
         set_single_persistent_default_layer(_DVORAK);
-      }
-      return false;
-      break;
-    case BACKLIT:
-      if (record->event.pressed) {
-        register_code(KC_RSFT);
-        #ifdef BACKLIGHT_ENABLE
-          backlight_step();
-        #endif
-        #ifdef KEYBOARD_planck_rev5
-          PORTE &= ~(1<<6);
-        #endif
-      } else {
-        unregister_code(KC_RSFT);
-        #ifdef KEYBOARD_planck_rev5
-          PORTE |= (1<<6);
-        #endif
       }
       return false;
       break;
@@ -181,6 +187,56 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return false;
         break;
+
+    case CTRL:
+        if (record->event.pressed) {
+            layer_on(_EN);
+            SEND_STRING(SS_DOWN(X_LCTRL));
+        } else {
+            layer_off(_EN);
+            SEND_STRING(SS_UP(X_LCTRL));
+        }
+        return false;
+        break;
+
+    case ALT:
+        if (record->event.pressed) {
+           layer_on(_EN);
+           SEND_STRING(SS_DOWN(X_LALT));
+        } else {
+           layer_off(_EN);
+           SEND_STRING(SS_UP(X_LALT));
+        }
+        return false;
+        break;
+
+    case GUI:
+        if (record->event.pressed) {
+            layer_on(_EN);
+            SEND_STRING(SS_DOWN(X_LGUI));
+        } else {
+            layer_off(_EN);
+            SEND_STRING(SS_UP(X_LGUI));
+        }
+        return false;
+        break;
+
+    case EN_LANG:  // sends win + space and turns off russan(qwerty) layer
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
+            layer_off(_QWERTY);
+        }
+        return false;
+        break;
+
+    case RU_LANG:  // sends win + space and turns on russian(qwerty) layer
+        if (record->event.pressed) {
+            SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
+            layer_on(_QWERTY);
+        }
+        return false;
+        break;
+
 
   }
   return true;

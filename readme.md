@@ -1,5 +1,5 @@
 # The Default Planck Layout
 
-Todo:
-    add dvp key on raise layer like in layout image
-    add ru key on lower layer like in layout image
+Todo:  
+    remove copypast using defines
+    try to use LM(layer, mod) from https://beta.docs.qmk.fm/features/feature_advanced_keycodes. To do it need to swap qwerty and dvorak layers
