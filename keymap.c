@@ -15,7 +15,6 @@ enum planck_layers {
 enum planck_keycodes {
   QWERTY = SAFE_RANGE,
   DVORAK,
-  BACKLIT,
 
   CTRL,
   ALT,
@@ -224,6 +223,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case EN_LANG:  // sends win + space and turns off russan(qwerty) layer
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
+            SEND_STRING(SS_DOWN(X_LALT) SS_TAP(X_LSHIFT) SS_UP(X_LALT));
             layer_off(_QWERTY);
         }
         return false;
@@ -232,6 +232,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case RU_LANG:  // sends win + space and turns on russian(qwerty) layer
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
+            SEND_STRING(SS_DOWN(X_LALT) SS_TAP(X_LSHIFT) SS_UP(X_LALT));
             layer_on(_QWERTY);
         }
         return false;
