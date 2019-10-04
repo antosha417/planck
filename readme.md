@@ -1,5 +1,16 @@
 # The Default Planck Layout
 
+How to install:
+```console
+cd ~
+git clone https://github.com/qmk/qmk_firmware
+cd qmk_firmware/keyboards/planck/keymaps/
+git clone https://github.com/antosha417/planck
+cd ~/qmk_firmware
+make planck/rev6:planck:dfu-util
+```
+Useful:
+* [keycodes](https://github.com/qmk/qmk_firmware/blob/master/docs/keycodes.md)
 Todo:  
-    remove copypast using defines
-    try to use LM(layer, mod) from https://beta.docs.qmk.fm/features/feature_advanced_keycodes. To do it need to swap qwerty and dvorak layers
+    remove copypast using defines  
+    read about music mode

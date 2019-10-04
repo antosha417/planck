@@ -23,7 +23,6 @@ enum planck_keycodes {
   RU,
   DVP,
 
-  //TODO
   EN_LANG,
   RU_LANG,
 };
@@ -105,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, KC_TILD, KC_PERC, _______, _______, KC_CIRC, KC_GRV,  KC_BSLS, KC_PIPE, _______,
     KC_DEL,  KC_LBRC, KC_LCBR, KC_RCBR, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN, KC_PLUS, KC_EXLM, KC_RBRC, KC_MINS,
     _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   RU,      _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, KC_PSCR, KC_PGDN, KC_PGUP, _______
+    _______, KC_RCTL, _______, _______, _______, _______, _______, _______, KC_PSCR, KC_PGDN, KC_PGUP, _______
 ),
 
 /* Raise
@@ -223,7 +222,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case EN_LANG:  // sends win + space and turns off russan(qwerty) layer
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
-            SEND_STRING(SS_DOWN(X_LALT) SS_TAP(X_LSHIFT) SS_UP(X_LALT));
+            SEND_STRING(SS_DOWN(X_LSHIFT) SS_TAP(X_LALT) SS_UP(X_LSHIFT));
             layer_off(_QWERTY);
         }
         return false;
@@ -232,7 +231,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case RU_LANG:  // sends win + space and turns on russian(qwerty) layer
         if (record->event.pressed) {
             SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
-            SEND_STRING(SS_DOWN(X_LALT) SS_TAP(X_LSHIFT) SS_UP(X_LALT));
+            SEND_STRING(SS_DOWN(X_LSHIFT) SS_TAP(X_LALT) SS_UP(X_LSHIFT));
             layer_on(_QWERTY);
         }
         return false;
