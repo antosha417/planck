@@ -1,4 +1,5 @@
 #include QMK_KEYBOARD_H
+#include <sendstring_dvorak.h>
 #include "muse.h"
 
 extern keymap_config_t keymap_config;
@@ -155,89 +156,43 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 
+#define CASE(keycode, key_pressed_action, key_released_action)  \
+    case (keycode):                                             \
+        if (record->event.pressed) {                            \
+            key_pressed_action;                                 \
+        } else {                                                \
+            key_released_action;                                \
+        }                                                       \
+        return false;                                           \
+        break;
+
+#define CASE_PRESSED(keycode, key_pressed_action) CASE(keycode, key_pressed_action, {})
+
+#define CASE_PRESSED_WITH_ON_EN_PRESS(keycode)                        \
+    CASE(keycode,                                               \
+        {layer_on(_EN); SEND_STRING(SS_DOWN(X_L ## keycode));}, \
+        {SEND_STRING(SS_UP(X_L ## keycode)); layer_off(_EN);}   \
+    );
+
+#define CHANGE_LANGUAGE {                                          \
+    SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));    \
+    SEND_STRING(SS_DOWN(X_LSHIFT) SS_TAP(X_LALT) SS_UP(X_LSHIFT)); \
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
-    case QWERTY:
-      if (record->event.pressed) {
-        print("mode just switched to qwerty and this is a huge string\n");
-        set_single_persistent_default_layer(_QWERTY);
-      }
-      return false;
-      break;
+    CASE_PRESSED(QWERTY, set_single_persistent_default_layer(_QWERTY));
+    CASE_PRESSED(DVORAK, set_single_persistent_default_layer(_DVORAK));
 
-    case DVORAK:
-      if (record->event.pressed) {
-        set_single_persistent_default_layer(_DVORAK);
-      }
-      return false;
-      break;
+    CASE_PRESSED(RU, layer_on(_QWERTY));
+    CASE_PRESSED(DVP, layer_off(_QWERTY));
 
-    case RU:  // turns on russian(qwerty) layer
-        if (record->event.pressed) {
-            layer_on(_QWERTY);
-        }
-        return false;
-        break;
+    CASE_PRESSED_WITH_ON_EN_PRESS(CTRL);
+    CASE_PRESSED_WITH_ON_EN_PRESS(ALT);
+    CASE_PRESSED_WITH_ON_EN_PRESS(GUI);
 
-    case DVP:  // turns off russian(qwerty) layer
-        if (record->event.pressed) {
-            layer_off(_QWERTY);
-        }
-        return false;
-        break;
-
-    case CTRL:
-        if (record->event.pressed) {
-            layer_on(_EN);
-            SEND_STRING(SS_DOWN(X_LCTRL));
-        } else {
-            layer_off(_EN);
-            SEND_STRING(SS_UP(X_LCTRL));
-        }
-        return false;
-        break;
-
-    case ALT:
-        if (record->event.pressed) {
-           layer_on(_EN);
-           SEND_STRING(SS_DOWN(X_LALT));
-        } else {
-           layer_off(_EN);
-           SEND_STRING(SS_UP(X_LALT));
-        }
-        return false;
-        break;
-
-    case GUI:
-        if (record->event.pressed) {
-            layer_on(_EN);
-            SEND_STRING(SS_DOWN(X_LGUI));
-        } else {
-            layer_off(_EN);
-            SEND_STRING(SS_UP(X_LGUI));
-        }
-        return false;
-        break;
-
-    case EN_LANG:  // sends win + space and turns off russan(qwerty) layer
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
-            SEND_STRING(SS_DOWN(X_LSHIFT) SS_TAP(X_LALT) SS_UP(X_LSHIFT));
-            layer_off(_QWERTY);
-        }
-        return false;
-        break;
-
-    case RU_LANG:  // sends win + space and turns on russian(qwerty) layer
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LGUI) SS_TAP(X_SPACE) SS_UP(X_LGUI));
-            SEND_STRING(SS_DOWN(X_LSHIFT) SS_TAP(X_LALT) SS_UP(X_LSHIFT));
-            layer_on(_QWERTY);
-        }
-        return false;
-        break;
-
-
+    CASE_PRESSED(RU_LANG, {CHANGE_LANGUAGE; layer_on(_QWERTY);});
+    CASE_PRESSED(EN_LANG, {CHANGE_LANGUAGE; layer_off(_QWERTY);});
   }
   return true;
 }
