@@ -158,49 +158,49 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 #define CHANGE_LANGUAGE {                   \
-    SEND_STRING(SS_LGUI(SS_TAP(X_SPACE)));  \
-    SEND_STRING(SS_LSFT(SS_TAP(X_LALT)));   \
+  SEND_STRING(SS_LGUI(SS_TAP(X_SPACE)));    \
+  SEND_STRING(SS_LSFT(SS_TAP(X_LALT)));     \
 };
 
 #define CASE(keycode, key_pressed_action, key_released_action)  \
-    case (keycode):                                             \
-        if (record->event.pressed) {                            \
-            key_pressed_action;                                 \
-        } else {                                                \
-            key_released_action;                                \
-        }                                                       \
-        return false;                                           \
-        break;
+  case (keycode):                                               \
+    if (record->event.pressed) {                                \
+      key_pressed_action;                                       \
+    } else {                                                    \
+      key_released_action;                                      \
+    }                                                           \
+    return false;                                               \
+    break;
 
 #define CASE_PRESSED(keycode, key_pressed_action) CASE(keycode, key_pressed_action, {});
 
 #define CASE_WITH_ON_EN(keycode, key_pressed_action, key_released_action)   \
-    CASE(keycode,                                                           \
-        {layer_on(_EN); key_pressed_action;},                               \
-        {key_released_action; layer_off(_EN);}                              \
-    );
+  CASE(keycode,                                                             \
+    {layer_on(_EN); key_pressed_action;},                                   \
+    {key_released_action; layer_off(_EN);}                                  \
+  );
 
-#define CASE_WITH_ON_EN_PRESS(keycode)          \
-    CASE_WITH_ON_EN(                            \
-        keycode,                                \
-        SEND_STRING(SS_DOWN(X_L ## keycode)),   \
-        SEND_STRING(SS_UP(X_L ## keycode))      \
-    );
+#define CASE_WITH_ON_EN_PRESS(keycode)      \
+  CASE_WITH_ON_EN(                          \
+    keycode,                                \
+    SEND_STRING(SS_DOWN(X_L ## keycode)),   \
+    SEND_STRING(SS_UP(X_L ## keycode))      \
+  );
 
-#define CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2)               \
-    CASE_WITH_ON_EN(keycode, {                                      \
-        keycode ## _TIMER = timer_read();                           \
-        IS_ ## keycode ## _ACTIVE = true;                           \
-    }, {                                                            \
-        if(IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE) {           \
-            unregister_code(KC_L ## mod_key1);                      \
-            unregister_code(KC_L ## mod_key2);                      \
-            IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;    \
-        } else {                                                    \
-            tap_code(KC_ ## keycode);                               \
-        }                                                           \
-        IS_ ## keycode ## _ACTIVE = false;                          \
-    });
+#define CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2)       \
+  CASE_WITH_ON_EN(keycode, {                                \
+    keycode ## _TIMER = timer_read();                       \
+    IS_ ## keycode ## _ACTIVE = true;                       \
+  }, {                                                      \
+    if(IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE) {       \
+      unregister_code(KC_L ## mod_key1);                    \
+      unregister_code(KC_L ## mod_key2);                    \
+      IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;  \
+    } else {                                                \
+      tap_code(KC_ ## keycode);                             \
+    }                                                       \
+    IS_ ## keycode ## _ACTIVE = false;                      \
+  });
 
 #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)            \
 uint16_t keycode ## _TIMER = 0;                             \
@@ -224,7 +224,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     CASE_PRESSED(RU_LANG, {CHANGE_LANGUAGE; layer_on(_QWERTY);});
     CASE_PRESSED(EN_LANG, {CHANGE_LANGUAGE; layer_off(_QWERTY);});
 
-    #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)                \
+    #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)    \
     CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2);
     #include "mod_tap_keys.h"
     #undef MOD_TAP_KEY
@@ -299,16 +299,16 @@ void dip_switch_update_user(uint8_t index, bool active) {
 }
 
 void matrix_scan_user(void) {
-    #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)        \
-    if (IS_ ## keycode ## _ACTIVE) {                        \
-        if (timer_elapsed(keycode ## _TIMER) > 200) {       \
-            register_code(KC_L ## mod_key1);                \
-            register_code(KC_L ## mod_key2);                \
-            IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = true;  \
-        }                                                   \
-      }
-    #include "mod_tap_keys.h"
-    #undef MOD_TAP_KEY
+  #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)          \
+  if (IS_ ## keycode ## _ACTIVE) {                          \
+    if (timer_elapsed(keycode ## _TIMER) > 200) {           \
+      register_code(KC_L ## mod_key1);                      \
+      register_code(KC_L ## mod_key2);                      \
+      IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = true;   \
+    }                                                       \
+  }
+  #include "mod_tap_keys.h"
+  #undef MOD_TAP_KEY
 
   #ifdef AUDIO_ENABLE
     if (muse_mode) {
