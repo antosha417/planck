@@ -14,4 +14,4 @@ Useful:
 * [string keycodes](https://github.com/qmk/qmk_firmware/blob/master/quantum/send_string_keycodes.h)  
 
 Todo:  
-    read about music mode
+* read about music mode
