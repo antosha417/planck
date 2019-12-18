@@ -3,8 +3,10 @@
 How to install:
 ```console
 cd ~
-git clone https://github.com/qmk/qmk_firmware
-cd qmk_firmware/keyboards/planck/keymaps/
+git clone --recurse-submodules https://github.com/qmk/qmk_firmware.git  
+cd qmk_firmware
+util/qmk_install.sh
+cd keyboards/planck/keymaps/
 git clone https://github.com/antosha417/planck
 cd ~/qmk_firmware
 make planck/rev6:planck:dfu-util
