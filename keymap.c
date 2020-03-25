@@ -13,6 +13,8 @@ enum planck_layers {
   _ADJUST
 };
 
+bool is_qwerty_active = false;
+
 enum planck_keycodes {
   QWERTY = SAFE_RANGE,
   DVORAK,
@@ -21,9 +23,7 @@ enum planck_keycodes {
   ALT,
   GUI,
 
-  CH_LANG,
-
-#define MOD_TAP_KEY(keycode, mod_key1, mod_key2)   \
+#define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)   \
   keycode,
 #include "mod_tap_keys.h"
 #undef MOD_TAP_KEY
@@ -165,8 +165,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 
-#define CHANGE_LANGUAGE {                   \
-  SEND_STRING(SS_LGUI(SS_TAP(X_SPACE)));    \
+#define CHANGE_LANGUAGE {                           \
+  if (is_qwerty_active) {                           \
+    layer_off(_QWERTY);                             \
+    SEND_STRING(SS_LSFT(SS_LCTL(SS_TAP(X_1))));     \
+  } else {                                          \
+    layer_on(_QWERTY);                              \
+    SEND_STRING(SS_LSFT(SS_LCTL(SS_TAP(X_2))));     \
+  }                                                 \
+  is_qwerty_active = !is_qwerty_active;             \
 };
 
 #define CASE(keycode, key_pressed_action, key_released_action)  \
@@ -194,22 +201,22 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     SEND_STRING(SS_UP(X_L ## keycode))      \
   );
 
-#define CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2)       \
-  CASE_WITH_ON_EN(keycode, {                                \
-    keycode ## _TIMER = timer_read();                       \
-    IS_ ## keycode ## _ACTIVE = true;                       \
-  }, {                                                      \
-    if(IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE) {       \
-      unregister_code(KC_L ## mod_key1);                    \
-      unregister_code(KC_L ## mod_key2);                    \
-      IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;  \
-    } else {                                                \
-      tap_code(KC_ ## keycode);                             \
-    }                                                       \
-    IS_ ## keycode ## _ACTIVE = false;                      \
+#define CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)\
+  CASE_WITH_ON_EN(keycode, {                                 \
+    keycode ## _TIMER = timer_read();                        \
+    IS_ ## keycode ## _ACTIVE = true;                        \
+  }, {                                                       \
+    if(IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE) {        \
+      unregister_code(KC_L ## mod_key1);                     \
+      unregister_code(KC_L ## mod_key2);                     \
+      IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;   \
+    } else {                                                 \
+      action                                                 \
+    }                                                        \
+    IS_ ## keycode ## _ACTIVE = false;                       \
   });
 
-#define MOD_TAP_KEY(keycode, mod_key1, mod_key2)            \
+#define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)    \
 uint16_t keycode ## _TIMER = 0;                             \
 bool IS_ ## keycode ## _ACTIVE = false;                     \
 bool IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;
@@ -224,10 +231,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     CASE_PRESSED(DVORAK, set_single_persistent_default_layer(_DVORAK));
 
-    CASE_PRESSED(CH_LANG, {CHANGE_LANGUAGE; layer_invert(_QWERTY);});
 
-    #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)    \
-    CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2);
+    #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)    \
+    CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2, action);
     #include "mod_tap_keys.h"
     #undef MOD_TAP_KEY
 
@@ -301,7 +307,7 @@ void dip_switch_update_user(uint8_t index, bool active) {
 }
 
 void matrix_scan_user(void) {
-  #define MOD_TAP_KEY(keycode, mod_key1, mod_key2)          \
+  #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)  \
   if (IS_ ## keycode ## _ACTIVE) {                          \
     if (timer_elapsed(keycode ## _TIMER) > TAPPING_TERM) {  \
       register_code(KC_L ## mod_key1);                      \
