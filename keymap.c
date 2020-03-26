@@ -15,6 +15,17 @@ enum planck_layers {
 
 bool is_qwerty_active = false;
 
+float USSR_SONG[][2] = SONG(B__NOTE(_G6), 
+  B__NOTE(_C7), W__NOTE(_G6), H__NOTE(_A6), 
+  B__NOTE(_B6), W__NOTE(_E6), W__NOTE(_E6), 
+  B__NOTE(_A6), W__NOTE(_G6), H__NOTE(_F6),
+  B__NOTE(_G6), W__NOTE(_C6), W__NOTE(_C6),
+  B__NOTE(_D6), W__NOTE(_D6), W__NOTE(_E6),
+  B__NOTE(_D6), W__NOTE(_D6), W__NOTE(_G6),
+  B__NOTE(_F6), W__NOTE(_G6), W__NOTE(_A6),
+  B__NOTE(_B6), 
+  );
+
 enum planck_keycodes {
   QWERTY = SAFE_RANGE,
   DVORAK,
@@ -22,6 +33,8 @@ enum planck_keycodes {
   CTRL,
   ALT,
   GUI,
+
+  BRUDERSCHAFT,
 
 #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)   \
   keycode,
@@ -149,17 +162,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT_planck_grid(
     _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, KC_DEL ,
-    _______, _______, MU_MOD,  AU_ON,   AU_OFF,  _______, _______, _______, _______, DVORAK,  _______, _______,
-    _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  _______, _______, _______, _______, _______, _______, _______,
+    _______, AU_ON,   AU_OFF,  _______, _______, _______, _______, _______, _______, DVORAK,  _______, _______,
+    _______, MU_ON,   MU_OFF,  _______, _______, _______, _______, _______, _______, _______, _______, BRUDERSCHAFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 
 };
 
-#ifdef AUDIO_ENABLE
-  float plover_song[][2]     = SONG(PLOVER_SOUND);
-  float plover_gb_song[][2]  = SONG(PLOVER_GOODBYE_SOUND);
-#endif
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
@@ -229,8 +238,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     CASE_WITH_ON_EN_PRESS(ALT);
     CASE_WITH_ON_EN_PRESS(GUI);
 
+    CASE_PRESSED(BRUDERSCHAFT, PLAY_SONG(USSR_SONG));
     CASE_PRESSED(DVORAK, set_single_persistent_default_layer(_DVORAK));
-
 
     #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)    \
     CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2, action);
@@ -283,14 +292,6 @@ void dip_switch_update_user(uint8_t index, bool active) {
   switch (index) {
     case 0:
       if (active) {
-        #ifdef AUDIO_ENABLE
-          PLAY_SONG(plover_song);
-        #endif
-        layer_on(_ADJUST);
-      } else {
-        #ifdef AUDIO_ENABLE
-          PLAY_SONG(plover_gb_song);
-        #endif
         layer_off(_ADJUST);
       }
       break;
