@@ -46,6 +46,7 @@ enum planck_keycodes {
 #define RAISE MO(_RAISE)
 #define LANG  TG(_QWERTY)
 #define KC_CAD LALT(LCTL(KC_DEL))
+#define KC_CAH LALT(LCTL(KC_HOME))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -110,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | Del  |  [   |  {   |  +   |  (   |  =   |  *   |   )  |   !  |   }  |   ]  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      | CAD  |      |      | LANG |      |      |      |      |      |      |      |
+ * |      | CAD  | CAH  |      | LANG |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      | RCTL |      |      |      | [{}] |      |      | PSCR | PGDN | PGUP |      |
  * `-----------------------------------------------------------------------------------'
@@ -118,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = LAYOUT_planck_grid(
     KC_F11,  _______, _______, KC_TILD, KC_PERC, _______, _______, KC_CIRC, KC_GRV,  KC_BSLS, KC_PIPE, KC_MINS,
     KC_DEL,  KC_LBRC, KC_LCBR, KC_PLUS, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN, KC_EXLM, KC_RCBR, KC_RBRC, _______,
-    _______, KC_CAD,  _______, _______, LANG,    _______, _______, _______, _______, _______, _______, _______,
+    _______, KC_CAD,  KC_CAH,  _______, LANG,    _______, _______, _______, _______, _______, _______, _______,
     _______, KC_RCTL, _______, _______, _______, _______, _______, _______, KC_PSCR, KC_PGDN, KC_PGUP, _______
 ),
 
