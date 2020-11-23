@@ -35,11 +35,37 @@ enum planck_keycodes {
   GUI,
 
   BRUDERSCHAFT,
+  ESCAPE_F,
 
 #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)   \
   keycode,
 #include "mod_tap_keys.h"
 #undef MOD_TAP_KEY
+};
+
+enum tap_dance_keycodes {
+    CT_BSPC,
+};
+
+void dance_bspc_finished(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        register_code(KC_BSPC);
+    } else {
+        register_code16(C(KC_BSPC));
+    }
+}
+
+void dance_bspc_reset(qk_tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+        unregister_code(KC_BSPC);
+    } else {
+        unregister_code16(C(KC_BSPC));
+    }
+}
+
+// All tap dance functions would go here. Only showing this one.
+qk_tap_dance_action_t tap_dance_actions[] = {
+    [CT_BSPC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_bspc_finished, dance_bspc_reset),
 };
 
 #define LOWER MO(_LOWER)
@@ -63,7 +89,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_DVORAK] = LAYOUT_planck_grid(
     KC_TAB,    KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_MINS,
-    ESC,       KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_BSPC,
+    ESC,       KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    TD(CT_BSPC),
     KC_LSFT,   KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_SFTENT,
     CH_LANG,   CTRL,    ALT,     GUI,     KC_SPC,  LOWER,   RAISE,   KC_SPC,  KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
@@ -109,7 +135,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * | F11  |      |      |   ~  |   %  |      |      |   ^  |   `  |   \  |   |  |  -   |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  |  [   |  {   |  +   |  (   |  =   |  *   |   )  |   !  |   }  |   ]  |      |
+ * | Del  |  [   |  {   |  +   |  (   |  =   |  *   |   )  |   !  |   }  |   ]  | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      | CAD  | CAH  |      | LANG |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -118,7 +144,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_LOWER] = LAYOUT_planck_grid(
     KC_F11,  _______, _______, KC_TILD, KC_PERC, _______, _______, KC_CIRC, KC_GRV,  KC_BSLS, KC_PIPE, KC_MINS,
-    KC_DEL,  KC_LBRC, KC_LCBR, KC_PLUS, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN, KC_EXLM, KC_RCBR, KC_RBRC, _______,
+    KC_DEL,  KC_LBRC, KC_LCBR, KC_PLUS, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN, KC_EXLM, KC_RCBR, KC_RBRC, KC_BSPC,
     _______, KC_CAD,  KC_CAH,  _______, LANG,    _______, _______, _______, _______, _______, _______, _______,
     _______, KC_RCTL, _______, _______, _______, _______, _______, _______, KC_PSCR, KC_PGDN, KC_PGUP, _______
 ),
@@ -127,7 +153,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * | F11  |      |      |  $   |  &   |      |      |   ?  |   @  |   #  |   /  | F12  |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |  7   |  5   |  3   |  1   |  9   |  0   |  2   |  4   |  6   |  8   |      |
+ * |      |  7   |  5   |  3   |  1   |  9   |  0   |  2   |  4   |  6   |  8   | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |  F7  |  F5  |  F3  |  F1  |  F9  |  F10 |  F2  |  F4  |  F6  |  F8  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -136,7 +162,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_RAISE] = LAYOUT_planck_grid(
     KC_F11,  _______, _______, KC_DLR,  KC_AMPR, _______, _______, KC_QUES, KC_AT,   KC_HASH, KC_SLSH, KC_F12,
-    _______, KC_7,    KC_5,    KC_3,    KC_1,    KC_9,    KC_0,    KC_2,    KC_4,    KC_6,    KC_8,    _______,
+    _______, KC_7,    KC_5,    KC_3,    KC_1,    KC_9,    KC_0,    KC_2,    KC_4,    KC_6,    KC_8,    KC_BSPC,
     _______, KC_F7,   KC_F5,   KC_F3,   KC_F1,   KC_F9,   KC_F10,  KC_F2,   KC_F4,   KC_F6,   KC_F8,   _______,
     _______, _______, _______, _______, _______, _______, _______, _______, KC_VOLD, KC_END,  KC_HOME, KC_VOLU
 ),
@@ -148,7 +174,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |Aud on|Audoff|      |      |      |      |      |      |Dvorak|      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |Mus on|Musoff|      |      |      |      |      |      |      |      | USSR |
+ * |      |Mus on|Musoff|      |      |      |      |      |      |      | EscF | USSR |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |      |      |      |      | [{}] | [{}] |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
@@ -156,7 +182,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_ADJUST] = LAYOUT_planck_grid(
     _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, KC_DEL ,
     _______, AU_ON,   AU_OFF,  _______, _______, _______, _______, _______, _______, DVORAK,  _______, _______,
-    _______, MU_ON,   MU_OFF,  _______, _______, _______, _______, _______, _______, _______, _______, BRUDERSCHAFT,
+    _______, MU_ON,   MU_OFF,  _______, _______, _______, _______, _______, _______, _______, ESCAPE_F,BRUDERSCHAFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 
@@ -225,6 +251,9 @@ bool IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;
 #include "mod_tap_keys.h"
 #undef MOD_TAP_KEY
 
+bool ESCAPE_F_MODE = false;
+uint16_t ESCAPE_F_MODE_TIMER = 0;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     CASE_WITH_ON_EN_PRESS(CTRL);
@@ -232,6 +261,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     CASE_WITH_ON_EN_PRESS(GUI);
 
     CASE_PRESSED(BRUDERSCHAFT, PLAY_SONG(USSR_SONG));
+    CASE_PRESSED(ESCAPE_F, {ESCAPE_F_MODE = !ESCAPE_F_MODE;})
     CASE_PRESSED(DVORAK, set_single_persistent_default_layer(_DVORAK));
 
     #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)    \
@@ -311,6 +341,14 @@ void matrix_scan_user(void) {
   }
   #include "mod_tap_keys.h"
   #undef MOD_TAP_KEY
+
+  if (ESCAPE_F_MODE) {
+    if(timer_elapsed(ESCAPE_F_MODE_TIMER) > 10000) {
+      tap_code(KC_ESC);
+      tap_code(KC_F);
+      ESCAPE_F_MODE_TIMER = timer_read();
+    }
+  }
 
   #ifdef AUDIO_ENABLE
     if (muse_mode) {
