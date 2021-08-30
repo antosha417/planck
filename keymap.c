@@ -10,29 +10,24 @@ enum planck_layers {
   _EN,
   _LOWER,
   _RAISE,
-  _PLOVER,
+  _TOP,
+  _BOTTOM,
   _ADJUST
 };
 
-bool is_qwerty_active = false;
-
-float USSR_SONG[][2] = SONG(B__NOTE(_G6), 
-  B__NOTE(_C7), W__NOTE(_G6), H__NOTE(_A6), 
-  B__NOTE(_B6), W__NOTE(_E6), W__NOTE(_E6), 
+float USSR_SONG[][2] = SONG(B__NOTE(_G6),
+  B__NOTE(_C7), W__NOTE(_G6), H__NOTE(_A6),
+  B__NOTE(_B6), W__NOTE(_E6), W__NOTE(_E6),
   B__NOTE(_A6), W__NOTE(_G6), H__NOTE(_F6),
   B__NOTE(_G6), W__NOTE(_C6), W__NOTE(_C6),
   B__NOTE(_D6), W__NOTE(_D6), W__NOTE(_E6),
   B__NOTE(_D6), W__NOTE(_D6), W__NOTE(_G6),
   B__NOTE(_F6), W__NOTE(_G6), W__NOTE(_A6),
-  B__NOTE(_B6), 
+  B__NOTE(_B6),
   );
 
 enum planck_keycodes {
   QWERTY = SAFE_RANGE,
-  DVORAK,
-
-  PLOVER,
-  EXT_PLOVER,
 
   RUS_LANG,
   EN_LANG,
@@ -44,12 +39,13 @@ enum planck_keycodes {
 
   BRUDERSCHAFT,
 
-#define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)   \
+#define MOD_TAP_KEY(keycode, tap_action, mod_on_action, mod_off_action)   \
   keycode,
 #include "mod_tap_keys.h"
 #undef MOD_TAP_KEY
 };
 
+/*
 enum tap_dance_keycodes {
     CT_BSPC,
 };
@@ -73,10 +69,11 @@ void dance_bspc_reset(qk_tap_dance_state_t *state, void *user_data) {
         unregister_code16(LGUI(KC_BSPC));
     }
 }
+*/
 
-// All tap dance functions would go here. 
+// All tap dance functions would go here. Use TD(CT_BSPC) in keymap
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [CT_BSPC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_bspc_finished, dance_bspc_reset),
+    /* [CT_BSPC] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_bspc_finished, dance_bspc_reset), */
 };
 
 #define LOWER MO(_LOWER)
@@ -85,24 +82,34 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 #define KC_CAD LALT(LCTL(KC_DEL))
 #define KC_CAH LALT(LCTL(KC_HOME))
 
+#define E_SFT LSFT_T(KC_E)
+#define A_ALT LALT_T(KC_A)
+#define O_GUI LGUI_T(KC_O)
+#define U_CTRL LCTL_T(KC_U)
+
+#define T_SFT RSFT_T(KC_T)
+#define S_ALT RALT_T(KC_S)
+#define N_GUI RGUI_T(KC_N)
+#define H_CTRL RCTL_T(KC_H)
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Dvorak
  * ,-----------------------------------------------------------------------------------.
  * | Tab  |   '  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  |  -   |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Esc  |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  | Bksp |
+ * | Esc  |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Shift|   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |Enter |
+ * |      |   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | LANG | Ctrl | Alt  | GUI  | SPC  |Lower |Raise | SPC  | Left | Down |  Up  |Right |
+ * |      |      |      |Bottom| SPC  |Lower |Raise | SPC  | TOP  |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_DVORAK] = LAYOUT_planck_grid(
-    KC_TAB,    KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_MINS,
-    ESC,       KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    TD(CT_BSPC),
-    KC_LSFT,   KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_SFTENT,
-    CH_LANG,   CTRL,    ALT,     GUI,     KC_SPC,  LOWER,   RAISE,   KC_SPC,  KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+    KC_TAB,  KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,     KC_C,    KC_R,    KC_L,    KC_MINS,
+    KC_ESC,  A_ALT,   O_GUI,   E_SFT,   U_CTRL,  KC_I,    KC_D,    H_CTRL,   T_SFT,   N_GUI,   S_ALT,   _______,
+    _______, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,     KC_W,    KC_V,    KC_Z,    _______,
+    _______, _______, _______, BOTTOM,  KC_SPC,  LOWER,   RAISE,   KC_SPC,   TOP,     _______, _______, _______
 ),
 
 
@@ -110,18 +117,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * |      |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  |  "   |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |      |
+ * |      |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  | Bsps |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |      |
+ * | Shft |   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  | Shft |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |      |      |      |      |      |      |      |
+ * |      | CTRL | ALT  | GUI  |      |      |      |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_QWERTY] = LAYOUT_planck_grid(
     _______,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_QUOT,
-    _______,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, _______,
-    _______,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, _______,
-    _______,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+    _______,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, LOPT(KC_BSPC),
+    KC_LSFT,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_SFTENT,
+    _______,  CTRL,    ALT,     GUI,     _______, _______, _______, _______, _______, _______, _______, _______
 ),
 
 /* EN
@@ -137,27 +144,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_EN] = LAYOUT_planck_grid(
     _______, KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    _______,
-    _______, KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    _______,
+    _______, KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,   _______,
     _______, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
 
 /* Lower
  * ,-----------------------------------------------------------------------------------.
- * | F11  |      |      |   ~  |   %  |      |      |   ^  |   `  |   \  |   |  |  -   |
+ * | F11  |      |  :   |  ~   |  %   |      |      |  ^   |  `   |  \   |  |   |  -   |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  |  [   |  {   |  +   |  (   |  =   |  *   |   )  |   !  |   }  |   ]  | Bksp |
+ * | Del  |  [   |  {   |  +   |  (   |  =   |  *   |   )  |   !  |  }   |  ]   | Bksp |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      | CAD  | CAH  |      | LANG |      | RUS  | EN   | HEB  |      |      |PLOVER|
+ * |      | CAD  | CAH  |      | LANG |      |      | EN   | HEB  | RUS  |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      | RCTL |      |      |      | [{}] |      |      | PSCR | PGDN | PGUP |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_planck_grid(
-    KC_F11,  _______, _______, KC_TILD, KC_PERC, _______, _______, KC_CIRC,  KC_GRV,  KC_BSLS,  KC_PIPE, KC_MINS,
-    KC_DEL,  KC_LBRC, KC_LCBR, KC_PLUS, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN,  KC_EXLM, KC_RCBR,  KC_RBRC, KC_BSPC,
-    _______, KC_CAD,  KC_CAH,  _______, LANG,    _______, _______, HEB_LANG, EN_LANG, RUS_LANG, _______, PLOVER,
-    _______, KC_RCTL, _______, _______, _______, _______, _______, _______,  KC_PSCR, KC_PGDN,  KC_PGUP, _______
+    KC_F11,  _______, KC_COLON, KC_TILD, KC_PERC, _______, _______, KC_CIRC,  KC_GRV,  KC_BSLS,  KC_PIPE, KC_MINS,
+    KC_DEL,  KC_LBRC, KC_LCBR,  KC_PLUS, KC_LPRN, KC_EQL,  KC_ASTR, KC_RPRN,  KC_EXLM, KC_RCBR,  KC_RBRC, KC_BSPC,
+    _______, KC_CAD,  KC_CAH,   _______, LANG,    _______, _______, HEB_LANG, EN_LANG, RUS_LANG, _______, _______,
+    _______, KC_RCTL, _______,  _______, _______, _______, _______, _______,  KC_PSCR, KC_PGDN,  KC_PGUP, _______
 ),
 
 /* Raise
@@ -178,23 +185,40 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______, _______, _______, _______, KC_VOLD, KC_END,  KC_HOME, KC_VOLU
 ),
 
-
-/* Plover layer (http://opensteno.org)
- * ,-----------------------------------------------------------------------------------.
- * |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |   #  |
+/* TOP
+ * ,-----------------------------------------------------------------------------------
+ * |      |      |      |      |      |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |   S  |   T  |   P  |   H  |   *  |   *  |   F  |   P  |   L  |   T  |   D  |
+ * |      |      |      |      |      |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |   S  |   K  |   W  |   R  |   *  |   *  |   R  |   B  |   G  |   S  |   Z  |
+ * |      |      | down | up   |      |      |      |      |      |      |      |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Exit |      |      |   A  |   O  |             |   E  |   U  |      |      |      |
+ * |      |      |      |      |      |      |      |      | [{}] |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
-[_PLOVER] = LAYOUT_planck_grid(
-    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1,    KC_1   ,
-    XXXXXXX, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,
-    XXXXXXX, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-    EXT_PLOVER, XXXXXXX, XXXXXXX, KC_C,    KC_V,    XXXXXXX, XXXXXXX, KC_N,    KC_M,    XXXXXXX, XXXXXXX, XXXXXXX
+[_TOP] = LAYOUT_planck_grid(
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, KC_DOWN, KC_UP,   _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+),
+
+/* BOTTOM
+ * ,-----------------------------------------------------------------------------------
+ * |      |      |      |      |      |      |      |      |      |      | ->   |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      |      |      |      |      | <-   |      |      |      |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      |      |      |      |      | vold | volu |      |      |      |
+ * |------+------+------+------+------+------+------+------+------+------+------+------|
+ * |      |      |      | [{}] |      |      |      |      |      |      |      |      |
+ * `-----------------------------------------------------------------------------------'
+ */
+[_BOTTOM] = LAYOUT_planck_grid(
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_RGHT, _______,
+    _______, _______, _______, _______, _______, _______, _______, KC_LEFT, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, KC_VOLD, KC_VOLU, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
 
 /* Adjust (Lower + Raise)
@@ -211,50 +235,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT_planck_grid(
     _______, RESET,   DEBUG,   RGB_TOG, RGB_MOD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_VAI, RGB_VAD, KC_DEL ,
-    _______, AU_ON,   AU_OFF,  _______, _______, _______, _______, _______, _______, DVORAK,  _______, _______,
-    _______, MU_ON,   MU_OFF,  _______, _______, _______, _______, _______, _______, _______, _______,BRUDERSCHAFT,
+    _______, AU_ON,   AU_OFF,  _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, MU_ON,   MU_OFF,  _______, _______, _______, _______, _______, _______, _______, _______, BRUDERSCHAFT,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 
 };
 
-void set_english_language(void) {                                
-    layer_off(_QWERTY);                                      
-    is_qwerty_active = false;                                
-    SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_1)))));     
+void set_english_language(void) {
+    layer_off(_QWERTY);
+    SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_1)))));
 }
 
-void set_russian_language(void) {                                
-    layer_on(_QWERTY);                                       
-    is_qwerty_active = true;                                 
-    SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_2)))));     
+void set_russian_language(void) {
+    layer_on(_QWERTY);
+    SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_2)))));
 }
 
-void set_hebrew_language(void) {                                 
-    layer_on(_QWERTY);                                       
-    is_qwerty_active = true;                                 
-    SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_3)))));     
+void set_hebrew_language(void) {
+    layer_on(_QWERTY);
+    SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_3)))));
 }
-
-
-void activate_plover_layer(void) {
-  layer_on(_PLOVER);
-  if (!eeconfig_is_enabled()) {
-    eeconfig_init();
-  }
-  keymap_config.raw = eeconfig_read_keymap();
-  keymap_config.nkro = 1;
-  eeconfig_update_keymap(keymap_config.raw);
-}
-
-
-void change_language(void) {                            
-  if (is_qwerty_active) {
-    set_english_language();
-  } else {                                          
-    set_russian_language();                         
-  }                                                 
-};
 
 
 #define CASE(keycode, key_pressed_action, key_released_action)   \
@@ -282,25 +283,24 @@ void change_language(void) {
     SEND_STRING(SS_UP(X_L ## keycode))      \
   );
 
-#define CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)\
-  CASE_WITH_ON_EN(keycode, {                                 \
-    keycode ## _TIMER = timer_read();                        \
-    IS_ ## keycode ## _ACTIVE = true;                        \
-  }, {                                                       \
-    if(IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE) {        \
-      unregister_code(KC_L ## mod_key1);                     \
-      unregister_code(KC_L ## mod_key2);                     \
-      IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;   \
-    } else {                                                 \
-      action                                                 \
-    }                                                        \
-    IS_ ## keycode ## _ACTIVE = false;                       \
+#define CASE_MOD_TAP_KEY(keycode, tap_action, mod_off_action) \
+  CASE_WITH_ON_EN(keycode, {                                  \
+    keycode ## _TIMER = timer_read();                         \
+    IS_ ## keycode ## _ACTIVE = true;                         \
+  }, {                                                        \
+    if(IS_ ## keycode ## _MOD_ACTIVE) {                       \
+      mod_off_action;                          		      \
+    } else if (IS_ ## keycode ## _ACTIVE) {                   \
+      tap_action                                              \
+    }                                                         \
+    IS_ ## keycode ## _MOD_ACTIVE = false; 		      \
+    IS_ ## keycode ## _ACTIVE = false;                        \
   });
 
-#define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)    \
-uint16_t keycode ## _TIMER = 0;                             \
-bool IS_ ## keycode ## _ACTIVE = false;                     \
-bool IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = false;
+#define MOD_TAP_KEY(keycode, tap_action, mod_on_action, mod_off_action) \
+uint16_t keycode ## _TIMER = 0;                                 	\
+bool IS_ ## keycode ## _ACTIVE = false; 		                \
+bool IS_ ## keycode ## _MOD_ACTIVE = false;
 #include "mod_tap_keys.h"
 #undef MOD_TAP_KEY
 
@@ -311,19 +311,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     CASE_WITH_ON_EN_PRESS(GUI);
 
     CASE_PRESSED(BRUDERSCHAFT, PLAY_SONG(USSR_SONG));
-    CASE_PRESSED(DVORAK, set_single_persistent_default_layer(_DVORAK));
 
     CASE_PRESSED(EN_LANG, set_english_language());
     CASE_PRESSED(RUS_LANG, set_russian_language());
     CASE_PRESSED(HEB_LANG, set_hebrew_language());
 
-    #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)    \
-    CASE_MOD_TAP_KEY(keycode, mod_key1, mod_key2, action);
+    #define MOD_TAP_KEY(keycode, tap_action, mod_on_action, mod_off_action) \
+    CASE_MOD_TAP_KEY(keycode, tap_action, mod_off_action);
     #include "mod_tap_keys.h"
     #undef MOD_TAP_KEY
-
-    CASE_PRESSED(PLOVER, activate_plover_layer());
-    CASE_PRESSED(EXT_PLOVER, layer_off(_PLOVER));
   }
   return true;
 }
@@ -386,13 +382,12 @@ void dip_switch_update_user(uint8_t index, bool active) {
 }
 
 void matrix_scan_user(void) {
-  #define MOD_TAP_KEY(keycode, mod_key1, mod_key2, action)  \
-  if (IS_ ## keycode ## _ACTIVE) {                          \
-    if (timer_elapsed(keycode ## _TIMER) > TAPPING_TERM) {  \
-      register_code(KC_L ## mod_key1);                      \
-      register_code(KC_L ## mod_key2);                      \
-      IS_ ## mod_key1 ## _ ## mod_key2 ## _ACTIVE = true;   \
-    }                                                       \
+  #define MOD_TAP_KEY(keycode, tap_action, mod_on_action, mod_off_action) \
+  if (IS_ ## keycode ## _ACTIVE) {                                        \
+    if (timer_elapsed(keycode ## _TIMER) > TAPPING_TERM) {                \
+      mod_on_action;                                                      \
+      IS_ ## keycode ## _MOD_ACTIVE = true;                               \
+    }                                                    		  \
   }
   #include "mod_tap_keys.h"
   #undef MOD_TAP_KEY
