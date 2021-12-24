@@ -4,10 +4,9 @@
 
 extern keymap_config_t keymap_config;
 
-enum planck_layers {
-  _DVORAK,
+enum layers {
   _QWERTY,
-  _EN,
+  _DVORAK,
   _LOWER,
   _RAISE,
   _TOP,
@@ -26,7 +25,7 @@ float USSR_SONG[][2] = SONG(B__NOTE(_G6),
   B__NOTE(_B6),
   );
 
-enum planck_keycodes {
+enum keycodes {
   QWERTY = SAFE_RANGE,
 
   RUS_LANG,
@@ -44,7 +43,9 @@ enum planck_keycodes {
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
-#define LANG  TG(_QWERTY)
+#define TOP MO(_TOP)
+#define BOTTOM MO(_BOTTOM)
+#define LANG  TG(_DVORAK)
 #define KC_CAD LALT(LCTL(KC_DEL))
 #define KC_CAH LALT(LCTL(KC_HOME))
 
@@ -62,25 +63,6 @@ enum planck_keycodes {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-/* Dvorak
- * ,-----------------------------------------------------------------------------------.
- * |      |   '  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  |      |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |Bottom| SPC  |Lower |Raise | SPC  | TOP  |      |      |      |
- * `-----------------------------------------------------------------------------------'
- */
-[_DVORAK] = LAYOUT_planck_grid(
-    _______, KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,     KC_C,    KC_R,    KC_L,    _______,
-    _______, A_ALT,   O_GUI,   E_SFT,   U_CTRL,  KC_I,    KC_D,    H_CTRL,   T_SFT,   N_GUI,   S_ALT,   _______,
-    _______, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,     KC_W,    KC_V,    KC_Z,    _______,
-    _______, _______, _______, BOTTOM,  KC_SPC,  LOWER,   RAISE,   KC_SPC,   TOP,     _______, _______, _______
-),
-
-
 /* Qwerty
  * ,-----------------------------------------------------------------------------------.
  * |      |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  |      |
@@ -89,19 +71,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |      |      |      |      |      |      |      |
+ * |      |      |      |Bottom| SPC  |Lower |Raise | SPC  | TOP  |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
 [_QWERTY] = LAYOUT_planck_grid(
     _______,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    _______,
     _______,  A_ALTQ,  S_GUIQ,  D_SFT,   F_CTLQ,  KC_G,    KC_H,    J_CTLQ,  K_SFT,   L_GUIQ,  SCLN_Q,  _______,
     _______,  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, _______,
-    _______,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+    _______, _______, _______, BOTTOM,  KC_SPC,  LOWER,   RAISE,   KC_SPC,   TOP,     _______, _______, _______
 ),
 
-/* EN
+/* Dvorak
  * ,-----------------------------------------------------------------------------------.
- * |      |   "  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  |      |
+ * |      |   '  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  |      |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * |      |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
@@ -110,12 +92,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |      |      |      |      |      |      |      |      |      |      |      |
  * `-----------------------------------------------------------------------------------'
  */
-[_EN] = LAYOUT_planck_grid(
-    _______, KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    _______,
-    _______, A_ALT,   O_GUI,   E_SFT,   U_CTRL,  KC_I,    KC_D,    H_CTRL,  T_SFT,   N_GUI,   S_ALT,   _______,
-    _______, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+[_DVORAK] = LAYOUT_planck_grid(
+    _______, KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,     KC_C,    KC_R,    KC_L,    _______,
+    _______, A_ALT,   O_GUI,   E_SFT,   U_CTRL,  KC_I,    KC_D,    H_CTRL,   T_SFT,   N_GUI,   S_ALT,   _______,
+    _______, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,     KC_W,    KC_V,    KC_Z,    _______,
+    _______,  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
+
 
 /* Lower
  * ,-----------------------------------------------------------------------------------.
@@ -210,18 +193,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
+void keyboard_post_init_user(void) {
+  layer_on(_DVORAK);
+}
+
 void set_english_language(void) {
-    layer_off(_QWERTY);
+    layer_on(_DVORAK);
     SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_1)))));
 }
 
 void set_russian_language(void) {
-    layer_on(_QWERTY);
+    layer_off(_DVORAK);
     SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_2)))));
 }
 
 void set_hebrew_language(void) {
-    layer_on(_QWERTY);
+    layer_off(_DVORAK);
     SEND_STRING(SS_LSFT(SS_LCTL(SS_LGUI(SS_TAP(X_3)))));
 }
 
@@ -267,7 +254,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     CASE_PRESSED(RUS_LANG, set_russian_language());
     CASE_PRESSED(HEB_LANG, set_hebrew_language());
 
-    CASE_PRESSED(VIM_SAVE, {set_english_language(); SEND_STRING(SS_TAP(X_ESC)SS_LSFT(SS_TAP(X_SCLN))SS_TAP(X_W)SS_TAP(X_ENT))});
+    CASE_PRESSED(VIM_SAVE, {set_english_language(); SEND_STRING(SS_TAP(X_ESC)SS_LSFT(SS_TAP(X_SCLN))SS_TAP(X_W)SS_TAP(X_ENT));});
 
     #define MOD_TAP_KEY(keycode, tap_action, mod_on_action, mod_off_action) \
     CASE_MOD_TAP_KEY(keycode, tap_action, mod_off_action);
@@ -387,6 +374,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 enum combo_events {
+  // combos for dvorak layer
   RU_COMBO,
   EN_COMBO,
   HEB_COMBO,
@@ -398,6 +386,7 @@ enum combo_events {
   BSPC_COMBO,
   BSPCW_COMBO,
 
+  // combos for qwerty layer
   RUQ_COMBO,
   ENQ_COMBO,
   HEBQ_COMBO,
@@ -413,7 +402,6 @@ enum combo_events {
 };
 uint16_t COMBO_LEN = COMBO_LENGTH;
 
-// combos for dvorak layer
 const uint16_t PROGMEM ru_combo[] = {KC_R, U_CTRL, COMBO_END};
 const uint16_t PROGMEM en_combo[] = {U_CTRL, S_ALT, COMBO_END};
 const uint16_t PROGMEM heb_combo[] = {KC_I, KC_V, COMBO_END};
@@ -425,7 +413,6 @@ const uint16_t PROGMEM bspc_combo[] = {KC_C, H_CTRL, COMBO_END};
 const uint16_t PROGMEM bspcw_combo[] = {N_GUI, U_CTRL, COMBO_END};
 const uint16_t PROGMEM save_combo[] = {O_GUI, H_CTRL, COMBO_END};
 
-// combos for qwerty layer
 const uint16_t PROGMEM ruq_combo[] = {KC_O, F_CTLQ, COMBO_END};
 const uint16_t PROGMEM enq_combo[] = {F_CTLQ, SCLN_Q, COMBO_END};
 const uint16_t PROGMEM hebq_combo[] = {KC_G, KC_DOT, COMBO_END};

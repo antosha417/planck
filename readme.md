@@ -17,3 +17,5 @@ Useful:
 
 Todo:
 * read about music mode
+* try language change buttons
+
